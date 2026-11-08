@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מרתון אתיקה בניהול - פורטל הכנה לבחינה</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Heebo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), #1e293b);
+            color: white;
+            padding: 2.5rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: #cbd5e1;
+            font-size: 1.1rem;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem 1.8rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-light);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        main {
+            max-width: 950px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        /* סגנון לשונית בחינה */
+        .q-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .options-list {
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+
+        .option-item {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-item:hover {
+            background-color: #f1f5f9;
+        }
+
+        .option-item.selected {
+            background-color: #e0e7ff;
+            border-color: var(--primary-light);
+            font-weight: 600;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-light);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .feedback.wrong {
+            display: block;
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        /* סגנון כרטיסיות לימוד */
+        .flashcards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .flashcard {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            min-height: 200px;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            min-height: 200px;
+            border-radius: var(--radius);
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+        }
+
+        .flashcard-front {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+        }
+
+        .flashcard-front h3 {
+            font-size: 1.25rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .flashcard-front span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            transform: rotateY(180deg);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* סגנון אבחון ידע */
+        .diag-score-box {
+            text-align: center;
+            padding: 2rem;
+            background: #ffffff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .score-num {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .status-badge {
+            display: inline-block;
+            margin-top: 0.75rem;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .status-pass { background-color: #d1fae5; color: #065f46; }
+        .status-mid { background-color: #fef3c7; color: #92400e; }
+        .status-fail { background-color: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>אתיקה בניהול - פורטל תרגול והכנה למבחן</h1>
+        <p>תרגול שאלות ממאגרי הבחינות, שינון מושגים ואינדיקטור מוכנות אישי</p>
+    </header>
+
+    <nav>
+        <button class="tab-btn active" onclick="switchTab('exam-tab')">שאלות ומבחנים</button>
+        <button class="tab-btn" onclick="switchTab('cards-tab')">כרטיסיות ומושגים</button>
+        <button class="tab-btn" onclick="switchTab('diag-tab')">הערכת מצב ידע</button>
+    </nav>
+
+    <main>
+        <!-- לשונית שאלות ומבחן -->
+        <section id="exam-tab" class="tab-content active">
+            <div id="questions-container"></div>
+        </section>
+
+        <!-- לשונית כרטיסיות ומושגים -->
+        <section id="cards-tab" class="tab-content">
+            <p style="text-align: center; margin-bottom: 1.5rem; color: var(--text-muted);">
+                לחץ על כל כרטיסייה על מנת להפוך אותה ולראות את ההגדרה והיישום:
+            </p>
+            <div class="flashcards-grid" id="cards-container"></div>
+        </section>
+
+        <!-- לשונית הערכת ידע ברגע נתון -->
+        <section id="diag-tab" class="tab-content">
+            <div class="card">
+                <h2>מבדק הערכת מוכנות מהיר לבחינה</h2>
+                <p style="margin: 0.75rem 0; color: var(--text-muted);">
+                    ענה על 5 שאלות מפתח המייצגות את נושאי הליבה המרכזיים של הקורס. בסיום תקבל הערכה לגבי מצב הידע שלך נכון לעכשיו והמלצות להמשך.
+                </p>
+                <div id="diag-questions"></div>
+                <button class="btn" style="width: 100%; margin-top: 1rem;" onclick="calcDiagnostic()">חשב את רמת המוכנות שלי</button>
+            </div>
+
+            <div id="diag-result" class="diag-score-box">
+                <h3>התוצאה שלך במבדק:</h3>
+                <div class="score-num" id="diag-score">0 / 5</div>
+                <div id="diag-badge" class="status-badge"></div>
+                <p id="diag-feedback" style="margin-top: 1rem; color: var(--text-dark);"></p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // ניהול ניווט בלשוניות
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // מאגר שאלות מתוך המבחנים והחומרים
+        const examData = [
+            {
+                id: 1,
+                question: "אל עורך עיתון הגיעה קלטת בה נשמע כוכב מנבל את פיו באופן שעלול למוטט לו את הקריירה. כיצד עליו לפעול לפי תאוריית בעלי המניות של מילטון פרידמן?",
+                options: [
+                    "עליו לפרסם את הקלטת ככל שהדבר יביא להגדלת רווחי העיתון.",
+                    "עליו לשקול את מידת הפגיעה ולהימנע מפרסום כשהנזק בלתי הפיך.",
+                    "עליו להביא במכלול השיקולים גם את האינטרסים של הכוכב.",
+                    "עליו לבחון את מידת התועלת אל מול הנזק שבפרסום."
+                ],
+                ans: 0,
+                exp: "פרידמן גורס כי האחריות הבלעדית של הפירמה היא להשיא את רווחי בעלי המניות, בכפוף לחוק."
+            },
+            {
+                id: 2,
+                question: "באותו אירוע (פרסום הקלטת), כיצד על העורך לפעול בהתאם לתאוריית בעלי העניין של אדוארד פרימן?",
+                options: [
+                    "עליו לפרסם את הקלטת רק אם זה מגדיל רווחים.",
+                    "עליו להביא במכלול השיקולים גם את האינטרסים של הכוכב מאחר והוא חלק מהסביבה העסקית.",
+                    "עליו להתעלם מכל גורם שאינו בעל מניות.",
+                    "עליו לפעול רק לפי הוראות החוק היבש."
+                ],
+                ans: 1,
+                exp: "לפי פרימן, יש להתחשב בכל מי שמושפע מפעילות התאגיד (עובדים, ספקים, קהילה, מושאי הסיקור)."
+            },
+            {
+                id: 3,
+                question: "חברת תקשורת מקדמת אג'נדה ירוקה כדי לשדר מעורבות חברתית ולהגדיל מכירות. האם הפעולה מוסרית לפי הגישה הקאנטיאנית?",
+                options: [
+                    "מוסרית, כי הפעולה הובילה לתוצאה סביבתית חיובית.",
+                    "לא מוסרית, כי המניע הוא רווח כלכלי ולא פעולה מתוך חובה מוסרית צרופה.",
+                    "מוסרית רק אם הציבור שינה את התנהגותו לטובה.",
+                    "מוסרית, מכיוון שהיא משיאה את רווחי בעלי המניות."
+                ],
+                ans: 1,
+                exp: "קאנט דורש כוונה ומניע טהור (הצו הקטגורי) ולא שימוש בערכים כאמצעי להשגת מטרה מסחרית."
+            },
+            {
+                id: 4,
+                question: "חברת ג'ונסון אנד ג'ונסון בפרשת הטיילנול מאופיינת ב:",
+                options: [
+                    "הסרת אחריות וגלגולה למפיצים.",
+                    "לקיחת אחריות מיידית, איסוף מוצרים והפקת לקחים (אריזות בטיחות).",
+                    "מציאת האשם והמתנה להכרעת בית המשפט.",
+                    "העדפת רווחי החברה המיידיים על פני שלום הציבור."
+                ],
+                ans: 1,
+                exp: "החברה פעלה מעבר לדרישות החוק מתוך מודעות לאחריות חברתית ושלום הציבור."
+            },
+            {
+                id: 5,
+                question: "חוק 'לא תעמוד על דם רעך' שנחקק בישראל הוא יישום ישיר של:",
+                options: [
+                    "תאוריית בעלי המניות של פרידמן.",
+                    "תאוריית היד הנעלמה של אדם סמית'.",
+                    "תאוריית המינימום המוסרי (כללי Kew Gardens).",
+                    "גישת המו\"מ של אלברט קאר."
+                ],
+                ans: 2,
+                exp: "החוק מעגן חובה להושיט עזרה כשיש צורך, יכולת וסכנה מוחשית לחיי אדם."
+            },
+            {
+                id: 6,
+                question: "מהו ניהיליזם מוסרי?",
+                options: [
+                    "תפיסה שהמוסר נקבע באופן אבסולוטי על ידי צו אלוהי.",
+                    "שלילת קיומן של נורמות וערכים מוסריים אובייקטיביים או תקפים.",
+                    "תפיסה לפיה המוסר תלוי בתרבות ובזמן.",
+                    "השקפה המקדמת רגולציה ממשלתית הדוקה."
+                ],
+                ans: 1,
+                exp: "ניהיליזם שולל את עצם קיומם או תוקפם של ערכים ונורמות מוסריות."
+            },
+            {
+                id: 7,
+                question: "מדוע פרסום תת-הכרתי נתפס כפרסום בעייתי מבחינה מוסרית?",
+                options: [
+                    "משום שהוא יקר מדי לביצוע.",
+                    "משום שהוא פוגע באוטונומיה ובחופש הבחירה המודע של הפרט.",
+                    "משום שהוא מותר רק למטרות פוליטיות.",
+                    "משום שאין בו תועלת כלכלית לחברות."
+                ],
+                ans: 1,
+                exp: "החדרת מסרים מתחת לסף ההכרה עוקפת את מנגנון השיפוט והרצון החופשי של האדם."
+            },
+            {
+                id: 8,
+                question: "לפי אדם סמית', מיהו היחיד שבוחר להיות תלוי בטוב ליבם וחסדיהם של אחרים?",
+                options: [
+                    "העובד השכיר.",
+                    "בעל המניות.",
+                    "הקבצן.",
+                    "היזם העסקי."
+                ],
+                ans: 2,
+                exp: "סמית' ציין שפרט לקבצן, בני אדם מסתמכים על אינטרס הדדי והחלפת תמורות בשוק ולא על נדבה."
+            }
+        ];
+
+        // הצגת השאלות בלשונית המבחן
+        function renderExamQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            examData.forEach((q, idx) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="q-title">שאלה ${idx + 1}: ${q.question}</div>
+                    <ul class="options-list">
+                        ${q.options.map((opt, oIdx) => `
+                            <li class="option-item" onclick="selectExamOption(${q.id}, ${oIdx}, this)">
+                                <strong>${['א', 'ב', 'ג', 'ד'][oIdx]}.</strong>&nbsp; ${opt}
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <button class="btn" onclick="checkExamAnswer(${q.id})">בדוק תשובה</button>
+                    <div class="feedback" id="feedback-${q.id}"></div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        const selectedExamAnswers = {};
+
+        function selectExamOption(qId, oIdx, el) {
+            selectedExamAnswers[qId] = oIdx;
+            const parent = el.closest('.options-list');
+            parent.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function checkExamAnswer(qId) {
+            const q = examData.find(item => item.id === qId);
+            const feedbackEl = document.getElementById(`feedback-${qId}`);
+            const userAns = selectedExamAnswers[qId];
+
+            if (userAns === undefined) {
+                alert('יש לבחור תשובה לפני הבדיקה');
+                return;
+            }
+
+            if (userAns === q.ans) {
+                feedbackEl.className = 'feedback correct';
+                feedbackEl.innerHTML = `<strong>נכון מאוד!</strong> ${q.exp}`;
+            } else {
+                feedbackEl.className = 'feedback wrong';
+                feedbackEl.innerHTML = `<strong>טעות.</strong> התשובה הנכונה היא: ${['א', 'ב', 'ג', 'ד'][q.ans]}. <br>${q.exp}`;
+            }
+        }
+
+        // מאגר כרטיסיות לימוד
+        const flashcards = [
+            {
+                term: "תאוריית בעלי המניות (פרידמן)",
+                desc: "אחריות הפירמה היא להשיא את הרווחים עבור בעלי המניות בלבד, תוך ציות לחוק וכללי המשחק החופשי ללא הונאה."
+            },
+            {
+                term: "תאוריית בעלי העניין (פרימן)",
+                desc: "על המנהל לקחת בחשבון את כל הגורמים המושפעים מהפירמה: עובדים, לקוחות, ספקים, קהילה וסביבה עסקית."
+            },
+            {
+                term: "מוסר קאנטיאני (דאונטולוגי)",
+                desc: "שם במוקד את הכוונה והמניע (הצו הקטגורי). מעשה נמדד לפי ערכו המוסרי הפנימי והחובה, ולא לפי תוצאותיו."
+            },
+            {
+                term: "תועלתנות (מיל ובת'האם)",
+                desc: "מעשה מוסרי נמדד לפי מבחן התוצאה: מקסום האושר והרווחה (Utility) וצמצום הסבל עבור מספר האנשים המרבי."
+            },
+            {
+                term: "המינימום המוסרי (Kew Gardens)",
+                desc: "חובת הצלה וסיוע כאשר מתקיימים: קרבה פיזית/מושגית, צורך דחוף, יכולת לסייע, והיעדר גורם חלופי."
+            },
+            {
+                term: "אלברט קאר (אתיקה במו\"מ)",
+                desc: "העולם העסקי מתנהג כמו משחק פוקר – מותר להשתמש בהסתרת מידע או בבלוף טקטי כל עוד לא עוברים על החוק היבש."
+            },
+            {
+                term: "מוסר רלטיבי (יחסי)",
+                desc: "תפיסה לפיה המוסר אינו קבוע, אלא תלוי הקשר חברתי, תרבותי, גיאוגרפי ותקופתי."
+            },
+            {
+                term: "פרשת פורד פינטו",
+                desc: "דוגמה לשימוש מעוות בגישה תועלתנית: תמחור חיי אדם אל מול עלות תיקון פגם בטיחותי ברכב."
+            }
+        ];
+
+        function renderFlashcards() {
+            const container = document.getElementById('cards-container');
+            container.innerHTML = '';
+
+            flashcards.forEach(card => {
+                const el = document.createElement('div');
+                el.className = 'flashcard';
+                el.onclick = () => el.classList.toggle('flipped');
+                el.innerHTML = `
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <h3>${card.term}</h3>
+                            <span>(לחץ להפיכת הכרטיסייה)</span>
+                        </div>
+                        <div class="flashcard-back">
+                            <p>${card.desc}</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        // מבדק הערכת מצב
+        const diagQuestions = [
+            {
+                q: "מהו ההבדל המרכזי בין גישתו של קאנט לגישה התועלתנית?",
+                options: [
+                    "קאנט בוחן את כוונת ומניע העושה, בעוד התועלתנות בוחנת את תוצאת המעשה.",
+                    "קאנט מתמקד אך ורק ברווחי בעלי המניות.",
+                    "התועלתנות דורשת מוסר אבסולוטי שאינו תלוי תוצאה.",
+                    "אין הבדל ביניהן."
+                ],
+                ans: 0
+            },
+            {
+                q: "בפרשת סדנאות היזע של נייק (Nike), על פי אילו כללים נטען כי לחברה יש חובה לפעול למען תנאי העובדים?",
+                options: [
+                    "כללי הבלוף של אלברט קאר",
+                    "כללי המינימום המוסרי (Kew Gardens)",
+                    "חוקי הסחר הבינלאומי היבשים בלבד",
+                    "עקרון היד הנעלמה"
+                ],
+                ans: 1
+            },
+            {
+                q: "מה מאפיין את עמדתו של אדם סמית' לגבי השוק החופשי?",
+                options: [
+                    "הוא דוגל בהתערבות ממשלתית נרחבת וקביעת מחירי מקסימום.",
+                    "הוא מאמין שהאינטרס האישי מוביל באמצעות 'היד הנעלמה' לאיזון ולטובת הכלל.",
+                    "הוא מתנגד לקיומו של מסחר חופשי ללא פיקוח דתי.",
+                    "הוא סבור כי רק רגולציה מונעת עוני."
+                ],
+                ans: 1
+            },
+            {
+                q: "פרסום שבו גיבור סדרה שותה בקבוק מים של מותג מוכר מבלי להצהיר על כך נחשב ל:",
+                options: [
+                    "פרסום תת-סיפי לחלוטין",
+                    "פרסום סמוי",
+                    "עבירה פלילית ללא שיקול אתי",
+                    "פרסום גלוי"
+                ],
+                ans: 1
+            },
+            {
+                q: "איזה מוסר מתאר אדם הסבור כי ערכי המוסר משתנים מתקופה לתקופה ומתרבות לתרבות?",
+                options: [
+                    "מוסר אבסולוטי",
+                    "ניהיליזם מוחלט",
+                    "מוסר יחסי (רלטיבי)",
+                    "מוסר קאנטיאני"
+                ],
+                ans: 2
+            }
+        ];
+
+        const diagAnswers = {};
+
+        function renderDiagnostic() {
+            const container = document.getElementById('diag-questions');
+            container.innerHTML = '';
+
+            diagQuestions.forEach((q, idx) => {
+                const qEl = document.createElement('div');
+                qEl.style.marginBottom = '1.2rem';
+                qEl.innerHTML = `
+                    <p style="font-weight: 600; margin-bottom: 0.5rem;">${idx + 1}. ${q.q}</p>
+                    <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+                        ${q.options.map((opt, oIdx) => `
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.95rem;">
+                                <input type="radio" name="diag-q-${idx}" value="${oIdx}" onchange="diagAnswers[${idx}] = ${oIdx}">
+                                ${opt}
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(qEl);
+            });
+        }
+
+        function calcDiagnostic() {
+            let correct = 0;
+            const total = diagQuestions.length;
+
+            if (Object.keys(diagAnswers).length < total) {
+                alert('אנא ענה על כל השאלות במבדק לקבלת אומדן מדויק.');
+                return;
+            }
+
+            diagQuestions.forEach((q, idx) => {
+                if (diagAnswers[idx] === q.ans) {
+                    correct++;
+                }
+            });
+
+            const resultBox = document.getElementById('diag-result');
+            const scoreNum = document.getElementById('diag-score');
+            const badge = document.getElementById('diag-badge');
+            const feedback = document.getElementById('diag-feedback');
+
+            scoreNum.textContent = `${correct} / ${total}`;
+            resultBox.style.display = 'block';
+
+            if (correct >= 4) {
+                badge.className = 'status-badge status-pass';
+                badge.textContent = 'רמת שליטה גבוהה (מוכן לבחינה)';
+                feedback.textContent = 'שליטה מצוינת בעקרונות הליבה של הקורס! מומלץ לעבור על השאלות הנוספות בלשונית המבחן כדי לחזק ניואנסים.';
+            } else if (correct === 3) {
+                badge.className = 'status-badge status-mid';
+                badge.textContent = 'רמת מוכנות בינונית';
+                feedback.textContent = 'יש לך בסיס טוב, אך נדרש חידוד בעיקר בהבחנה בין גישות תוצאתיות (תועלתנות) לגישות חובה (קאנט) ומודלים של אחריות תאגידית.';
+            } else {
+                badge.className = 'status-badge status-fail';
+                badge.textContent = 'נדרשת חזרה נוספת על החומר';
+                feedback.textContent = 'מומלץ לעבור בעיון על לשונית הכרטיסיות, לשנן את מושגי היסוד ולתרגל שוב את שאלות המבחן לפני הבחינה.';
+            }
+
+            resultBox.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // טעינה ראשונית
+        window.onload = function() {
+            renderExamQuestions();
+            renderFlashcards();
+            renderDiagnostic();
+        };
+    </script>
+</body>
+</html>
